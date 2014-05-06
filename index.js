@@ -325,6 +325,7 @@ function() {
         console.log('Operation: '.bold, fail.operation);
         console.log('Reason: '.bold, fail.reason);
       });
+      process.exit(1);
     } else {
       console.log('OK'.bold.green);
     }
