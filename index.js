@@ -17,241 +17,53 @@ var spawn = require('child_process').spawn;
 
 var EOL = require('os').EOL;
 
-var ACCESS = [
-  'ssh://',
-  'https://',
-  'git://'
-];
+// default to https
+var ACCESS = 'https://';
+// default to 30 concurrent checkous
+var JOBS = 30;
 
-var MAX = 30;
-
-var configs = [
-  {
-    "folder": "components",
-    "org": "Polymer",
-    "repos": [
-      "CustomElements",
-      "HTMLImports",
-      "MutationObservers",
-      "NodeBind",
-      "PointerEvents",
-      "PointerGestures",
-      "polymer-gestures",
-      "ShadowDOM",
-      "TemplateBinding",
-      "URL",
-      "WeakMap",
-      "observe-js",
-      "platform",
-      "platform-dev",
-      "polymer",
-      "polymer-dev",
-      "polymer-expressions",
-      "tools"
-    ]
-  },
-  {
-    "folder": "components",
-    "org": "web-animations",
-    "repos": [
-      "web-animations-js"
-    ]
-  },
-  {
-    "folder": "components",
-    "org": "Polymer",
-    "repos": [
-      "core-action-icons",
-      "core-ajax",
-      "core-bind",
-      "core-collapse",
-      "core-component-page",
-      "core-component-page-dev",
-      "core-doc-viewer",
-      "core-docs",
-      "core-drag-drop",
-      "core-drawer-panel",
-      "core-elements",
-      "core-field",
-      "core-firebase",
-      "core-header-panel",
-      "core-home-page",
-      "core-home-page-dev",
-      "core-icon",
-      "core-icon-button",
-      "core-icons",
-      "core-iconset",
-      "core-iconset-svg",
-      "core-input",
-      "core-item",
-      "core-layout",
-      "core-layout-grid",
-      "core-layout-trbl",
-      "core-list",
-      "core-localstorage",
-      "core-media-query",
-      "core-menu",
-      "core-menu-button",
-      "core-meta",
-      "core-overlay",
-      "core-pages",
-      "core-range",
-      "core-scaffold",
-      "core-selection",
-      "core-selector",
-      "core-shared-lib",
-      "core-splitter",
-      "core-tests",
-      "core-theme-aware",
-      "core-toolbar",
-      "core-tooltip",
-      "core-transition",
-      "sampler-scaffold"
-    ]
-  },
-  {
-    "folder": "components",
-    "org": "PolymerLabs",
-    "repos": [
-      "ace-element",
-      "chart-js",
-      "code-mirror",
-      "cool-clock",
-      "fire-base",
-      "flatiron-director",
-      "g-kratu",
-      "github-elements",
-      "google-apis",
-      "google-map",
-      "humane-js",
-      "js-beautify",
-      "marked-js",
-      "more-elements",
-      "pdf-js",
-      "pixi-js",
-      "polymer-ajax",
-      "polymer-anchor-point",
-      "polymer-animation",
-      "polymer-collapse",
-      "polymer-cookie",
-      "polymer-doc-viewer",
-      "polymer-elements",
-      "polymer-file",
-      "polymer-flex-layout",
-      "polymer-google-jsapi",
-      "polymer-grid-layout",
-      "polymer-home-page",
-      "polymer-home-page-dev",
-      "polymer-jsonp",
-      "polymer-key-helper",
-      "polymer-layout",
-      "polymer-list",
-      "polymer-localstorage",
-      "polymer-media-query",
-      "polymer-meta",
-      "polymer-mock-data",
-      "polymer-overlay",
-      "polymer-page",
-      "polymer-scrub",
-      "polymer-sectioned-list",
-      "polymer-selection",
-      "polymer-selector",
-      "polymer-shared-lib",
-      "polymer-signals",
-      "polymer-stock",
-      "polymer-ui-accordion",
-      "polymer-ui-action-icons",
-      "polymer-ui-animated-pages",
-      "polymer-ui-arrow",
-      "polymer-ui-base",
-      "polymer-ui-breadcrumbs",
-      "polymer-ui-card",
-      "polymer-ui-clock",
-      "polymer-ui-collapsible",
-      "polymer-ui-dropdown",
-      "polymer-ui-dropup",
-      "polymer-ui-elements",
-      "polymer-ui-field",
-      "polymer-ui-icon",
-      "polymer-ui-icon-button",
-      "polymer-ui-iconset",
-      "polymer-ui-line-chart",
-      "polymer-ui-menu",
-      "polymer-ui-menu-button",
-      "polymer-ui-menu-item",
-      "polymer-ui-nav-arrow",
-      "polymer-ui-overlay",
-      "polymer-ui-pages",
-      "polymer-ui-ratings",
-      "polymer-ui-scaffold",
-      "polymer-ui-sidebar",
-      "polymer-ui-sidebar-header",
-      "polymer-ui-sidebar-menu",
-      "polymer-ui-splitter",
-      "polymer-ui-stock",
-      "polymer-ui-submenu-item",
-      "polymer-ui-tabs",
-      "polymer-ui-theme-aware",
-      "polymer-ui-toggle-button",
-      "polymer-ui-toolbar",
-      "polymer-ui-weather",
-      "polymer-view-source-link",
-      "smoothie-chart",
-      "speech-mic",
-      "speech-transcript",
-      "three-js",
-      "tk-buildbot",
-      "typeahead-input",
-      "wu-weather",
-      "x-binding",
-      "x-designable",
-      "x-designer",
-      "x-dom-serializer",
-      "x-editors",
-      "x-file-document",
-      "x-inspector",
-      "x-live-edit",
-      "x-meta",
-      "x-output",
-      "x-palette",
-      "x-property-inspector",
-      "x-tags",
-      "x-tree",
-      "yt-video"
-    ]
-  },
-  {
-    "folder": "projects",
-    "org": "PolymerLabs",
-    "repos": [
-      "arrange-game",
-      "book-search",
-      "contacts",
-      "designer",
-      "gallery",
-      "memory-game",
-      "pica",
-      "playground",
-      "sandbox",
-      "shuttle",
-      "slideshow",
-      "test-dashboard",
-      "youtube"
-    ]
-  },
-  {
-    "folder": "projects",
-    "org": "Polymer",
-    "repos": [
-      "core-sampler",
-      "todomvc"
-    ]
-  }
-];
-
-var repos = [];
-var folders = {};
+// global array of clone/update failures
+// report these at the end
 var failed = [];
+
+var options = nopt(
+  {
+    'ssh': Boolean,
+    'jobs': Number,
+    'help': Boolean
+  },
+  {
+    '-s': ['--ssh'],
+    '-j': ['--jobs'],
+    '-?': ['--help'],
+    '-h': ['--help']
+  }
+);
+
+var configFiles = options.argv.remain;
+
+if (!configFiles.length || options.help) {
+  console.log([
+    'bigstraw: get all the repos, fast',
+    '',
+    'Usage:',
+    '  bigstraw [OPTIONS] <json file>*',
+    '',
+    'Options:',
+    '  --ssh, -s: Use ssh keys for push/pull access',
+    '  --jobs #, -j #: Number of concurrent git operations (Default ' + JOBS + ')',
+    '  --help, -h: Print this message'
+  ].join(EOL));
+  process.exit();
+}
+
+if (options.jobs > 0) {
+  JOBS = options.jobs;
+}
+
+if (options.ssh) {
+  ACCESS = 'ssh://';
+}
 
 function cloneOrUpdate(repo, callback) {
   fs.exists(repo.to, function(result) {
@@ -296,38 +108,69 @@ function clone(repo, callback) {
   gitWrapper(repo, [
     'clone',
     '--recurse',
-    'ssh://github.com/' + repo.from
+    ACCESS + 'github.com/' + repo.from
   ], path.dirname(repo.to), callback);
 }
 
-configs.forEach(function(conf) {
-  conf.repos.forEach(function(r) {
-    folders[conf.folder] = 1;
-    repos.push({from: conf.org + '/' + r + '.git', to: conf.folder + '/' + r});
-  });
-});
 
-// make the output folders
-async.each(Object.keys(folders), function(folder, callback) {
-  fs.mkdir(folder, function() {
-    callback();
-  });
-},
-function() {
-  // clone or update the repos
-  async.eachLimit(repos, MAX, cloneOrUpdate, function() {
-    // report a nice error log
-    if (failed.length) {
-      console.log('FAILED'.bold.red);
-      failed.forEach(function(fail) {
-        console.log('Repo: '.bold, fail.repo.from);
-        console.log('Folder: '.bold, fail.repo.to);
-        console.log('Operation: '.bold, fail.operation);
-        console.log('Reason: '.bold, fail.reason);
+async.waterfall([
+  // read and parse JSON configs from commandline
+  function(callback) {
+    var fn = async.seq(
+      fs.readFile,
+      function(data, callback) {
+        try {
+          callback(null, JSON.parse(data));
+        } catch(e) {
+          callback(e, null);
+        }
       });
-      process.exit(1);
-    } else {
-      console.log('OK'.bold.green);
-    }
-  });
+    async.map(configFiles, fn, callback);
+  },
+  // flatten configs to an array of repos
+  function(configs, callback) {
+    var repos = [];
+    var folders = [];
+    configs = configs.reduce(function(a, b){ return a.concat(b); });
+    configs.forEach(function(conf) {
+      conf.repos.forEach(function(r) {
+        folders[conf.dir] = 1;
+        repos.push({from: conf.org + '/' + r + '.git', to: conf.dir + '/' + r});
+      });
+    });
+    callback(null, repos, folders);
+  },
+  // create output folders
+  function(repos, folders, callback) {
+    // make the output folders
+    async.each(Object.keys(folders), function(folder, cb) {
+      fs.mkdir(folder, function() {
+        cb();
+      });
+    });
+    callback(null, repos);
+  },
+  // clone or update repos
+  function(repos, callback) {
+    async.eachLimit(repos, JOBS, cloneOrUpdate, function() {
+      // report a nice error log
+      if (failed.length) {
+        console.log('FAILED'.bold.red);
+        failed.forEach(function(fail) {
+          console.log('Repo: '.bold, fail.repo.from);
+          console.log('Folder: '.bold, fail.repo.to);
+          console.log('Operation: '.bold, fail.operation);
+          console.log('Reason: '.bold, fail.reason);
+        });
+        process.exit(1);
+      } else {
+        console.log('OK'.bold.green);
+      }
+      callback();
+    });
+  }
+], function(err) {
+  if (err) {
+    console.log(String(err).bold.red);
+  }
 });

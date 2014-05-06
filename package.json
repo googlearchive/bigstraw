@@ -1,8 +1,13 @@
 {
   "name": "bigstraw",
-  "version": "0.0.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Get a bunch of git resources, fast",
   "main": "index.js",
+  "bin": {
+    "bigstraw": "index.js"
+  },
+  "license": "BSD",
+  "author": "Daniel Freedman <dfreedm@google.com>",
   "dependencies": {
     "async": "^0.8.0",
     "colors": "^0.6.2",
