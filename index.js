@@ -65,7 +65,7 @@ if (options.jobs > 0) {
 }
 
 if (options.ssh) {
-  ACCESS = 'ssh://';
+  ACCESS = 'ssh://git@';
 }
 
 function cloneOrUpdate(repo, callback) {
