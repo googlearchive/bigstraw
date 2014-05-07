@@ -30,13 +30,15 @@ var options = nopt(
   {
     'ssh': Boolean,
     'jobs': Number,
-    'help': Boolean
+    'help': Boolean,
+    'quiet': Boolean
   },
   {
     '-s': ['--ssh'],
     '-j': ['--jobs'],
     '-?': ['--help'],
-    '-h': ['--help']
+    '-h': ['--help'],
+    '-q': ['--quiet']
   }
 );
 
@@ -52,6 +54,7 @@ if (!configFiles.length || options.help) {
     'Options:',
     '  --ssh, -s: Use ssh keys for push/pull access',
     '  --jobs #, -j #: Number of concurrent git operations (Default ' + JOBS + ')',
+    '  --quiet, -q: Only print errors and success messages',
     '  --help, -h: Print this message'
   ].join(EOL));
   process.exit();
@@ -79,8 +82,10 @@ function gitWrapper(repo, args, cwd, callback) {
   var git = spawn('git', args, {cwd: cwd, stdout: 'ignore'});
   var operation = args[0];
   // print a nice status message "=== pull foo ==="
-  var sides = '==='.blue;
-  console.log(sides, operation.bold.blue, path.basename(repo.to, '.git').bold, sides);
+  if (!options.quiet) {
+    var sides = '==='.blue;
+    console.log(sides, operation.bold.blue, path.basename(repo.to, '.git').bold, sides);
+  }
   var errData = [];
   git.stderr.on('data', function(data) {
     errData.push(String(data));
