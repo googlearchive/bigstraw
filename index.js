@@ -107,6 +107,8 @@ function update(repo, callback) {
 function clone(repo, callback) {
   gitWrapper(repo, [
     'clone',
+    // don't hang on asking passwords
+    '-c core.askpass=true',
     '--recurse',
     ACCESS + 'github.com/' + repo.from
   ], path.dirname(repo.to), callback);
