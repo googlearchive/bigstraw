@@ -100,7 +100,16 @@ function gitWrapper(repo, args, cwd, callback) {
 function update(repo, callback) {
   async.series([
     async.apply(gitWrapper, repo, ['pull', '--rebase'], repo.to),
-    async.apply(gitWrapper, repo, ['submodule', 'update', '--init', '--recursive'], repo.to)
+    // if .gitmodules exists, then try to update submodules
+    function(callback) {
+      fs.exists(path.join(repo.to, '.gitmodules'), function(exists) {
+        if (exists) {
+          gitWrapper(repo, ['submodule', 'update', '--init', '--recursive'], repo.to, callback);
+        } else {
+          callback();
+        }
+      });
+    }
   ], callback);
 }
 
