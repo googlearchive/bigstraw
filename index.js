@@ -150,14 +150,13 @@ async.waterfall([
     configs.forEach(function(conf) {
       conf.repos.forEach(function(r) {
         folders[conf.dir] = 1;
-        repos.push({from: conf.org + '/' + r + '.git', to: conf.dir + '/' + r});
+        repos.push({from: conf.org + '/' + r + '.git', to: path.join(conf.dir, r)});
       });
     });
     callback(null, repos, folders);
   },
   // create output folders
   function(repos, folders, callback) {
-    // make the output folders
     async.each(Object.keys(folders), function(folder, cb) {
       fs.mkdir(folder, function() {
         cb();
@@ -170,22 +169,23 @@ async.waterfall([
     async.eachLimit(repos, JOBS, cloneOrUpdate, function() {
       // report a nice error log
       if (failed.length) {
-        console.log('FAILED'.bold.red);
+        console.log('FAILED REPOS'.bold.red);
         failed.forEach(function(fail) {
           console.log('Repo: '.bold, fail.repo.from);
           console.log('Folder: '.bold, fail.repo.to);
           console.log('Operation: '.bold, fail.operation);
           console.log('Reason: '.bold, fail.reason);
         });
-        process.exit(1);
+        callback('FAILED SYNC');
       } else {
         console.log('OK'.bold.green);
+        callback();
       }
-      callback();
     });
   }
 ], function(err) {
   if (err) {
     console.log(String(err).bold.red);
+    process.exit(1);
   }
 });
