@@ -114,7 +114,6 @@ function clone(repo, callback) {
   ], path.dirname(repo.to), callback);
 }
 
-
 async.waterfall([
   // read and parse JSON configs from commandline
   function(callback) {
