@@ -28,12 +28,14 @@ var failed = [];
 
 var options = nopt(
   {
+    'branch': String,
     'ssh': Boolean,
     'jobs': Number,
     'help': Boolean,
     'quiet': Boolean
   },
   {
+    '-b': ['--branch'],
     '-s': ['--ssh'],
     '-j': ['--jobs'],
     '-?': ['--help'],
@@ -52,6 +54,7 @@ if (!configFiles.length || options.help) {
     '  bigstraw [OPTIONS] <json file>*',
     '',
     'Options:',
+    ' --branch <name>, -b <name>: Force a certain branch to checkout (Default: GitHub default branch)',
     '  --ssh, -s: Use ssh keys for push/pull access',
     '  --jobs #, -j #: Number of concurrent git operations (Default ' + JOBS + ')',
     '  --quiet, -q: Only print errors and success messages',
@@ -103,7 +106,7 @@ function gitWrapper(repo, args, cwd, callback) {
 }
 
 function update(repo, callback) {
-  async.series([
+  var ops = [
     async.apply(gitWrapper, repo, ['pull', '--rebase'], repo.to),
     // if .gitmodules exists, then try to update submodules
     function(callback) {
@@ -115,17 +118,27 @@ function update(repo, callback) {
         }
       });
     }
-  ], callback);
+  ];
+  if (options.branch) {
+    ops.unshift(async.apply(gitWrapper, repo, ['checkout', options.branch], repo.to));
+  }
+  async.series(ops, callback);
 }
 
 function clone(repo, callback) {
-  gitWrapper(repo, [
+  var args = [
     'clone',
     // don't hang on asking passwords
-    '-c core.askpass=true',
+    '-c',
+    'core.askpass=true',
     '--recurse',
     ACCESS + 'github.com/' + repo.from
-  ], path.dirname(repo.to), callback);
+  ];
+  if (options.branch) {
+    args.push('-b');
+    args.push(options.branch);
+  }
+  gitWrapper(repo, args, path.dirname(repo.to), callback);
 }
 
 async.waterfall([

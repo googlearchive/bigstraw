@@ -1,6 +1,6 @@
 {
   "name": "bigstraw",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Get a bunch of git resources, fast",
   "main": "index.js",
   "bin": {
@@ -15,7 +15,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo 'clone test' && node index.js example.json && echo 'pull test' && node index.js example.json && rm -rf test"
+    "test": "bash test.sh"
   },
   "repository": {
     "type": "git",
