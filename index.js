@@ -22,6 +22,9 @@ var ACCESS = 'https://';
 // default to 30 concurrent checkous
 var JOBS = 30;
 
+// githubname::checkoutname
+var SPLIT = '::';
+
 // global array of clone/update failures
 // report these at the end
 var failed = [];
@@ -69,6 +72,15 @@ if (options.jobs > 0) {
 
 if (options.ssh) {
   ACCESS = 'ssh://git@';
+}
+
+function githubToCheckout(repo) {
+  var parts = repo.split(SPLIT);
+  if (parts.length === 1) {
+    parts[1] = parts[0];
+  }
+  // [githubName, checkoutName]
+  return parts;
 }
 
 function cloneOrUpdate(repo, callback) {
@@ -132,7 +144,8 @@ function clone(repo, callback) {
     '-c',
     'core.askpass=true',
     '--recurse',
-    ACCESS + 'github.com/' + repo.from
+    ACCESS + 'github.com/' + repo.from,
+    path.basename(repo.to)
   ];
   if (options.branch) {
     args.push('-b');
@@ -163,7 +176,8 @@ async.waterfall([
     configs.forEach(function(conf) {
       conf.repos.forEach(function(r) {
         folders[conf.dir] = 1;
-        repos.push({from: conf.org + '/' + r + '.git', to: path.join(conf.dir, r)});
+        var repoNames = githubToCheckout(r);
+        repos.push({from: conf.org + '/' + repoNames[0] + '.git', to: path.join(conf.dir, repoNames[1])});
       });
     });
     callback(null, repos, folders);

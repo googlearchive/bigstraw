@@ -1,0 +1,9 @@
+[
+  {
+    "dir": "test",
+    "org": "firebase",
+    "repos": [
+      "firebase-bower::firebase"
+    ]
+  }
+]
