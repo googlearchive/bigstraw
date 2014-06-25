@@ -19,8 +19,8 @@ var EOL = require('os').EOL;
 
 // default to https
 var ACCESS = 'https://';
-// default to 30 concurrent checkous
-var JOBS = 30;
+// default to 10 concurrent checkous
+var JOBS = 10;
 
 // githubname::checkoutname
 var SPLIT = '::';
