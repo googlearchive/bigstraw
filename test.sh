@@ -33,4 +33,9 @@ node index.js -b master coloncolon.json
 [ -d test/firebase ] || exit 1
 echo 'branch pull with :: syntax test'
 node index.js -b master coloncolon.json
+echo 'test -s + --no-s'
+node index.js notssh.json -s --no-s
+[ -d test/polymer ] || exit 1
+REMOTE=$(GIT_DIR="test/polymer/.git" git config --get remote.origin.url)
+[ $REMOTE = "https://github.com/Polymer/polymer.git" ] || exit 1
 rm -rf test
