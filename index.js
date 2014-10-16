@@ -8,8 +8,12 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
+// jshint node: true
+
+'use strict';
+
 var async = require('async');
-var colors = require('colors');
+var chalk = require('chalk');
 var fs = require('fs');
 var nopt = require('nopt');
 var path = require('path');
@@ -98,8 +102,8 @@ function gitWrapper(repo, args, cwd, callback) {
   var operation = args[0];
   // print a nice status message "=== pull foo ==="
   if (!options.quiet) {
-    var sides = '==='.blue;
-    console.log(sides, operation.bold.blue, path.basename(repo.to, '.git').bold, sides);
+    var sides = chalk.blue('===');
+    console.log(sides, chalk.blue.bold(operation), chalk.bold(path.basename(repo.to, '.git')), sides);
   }
   var errData = [];
   git.stderr.on('data', function(data) {
@@ -196,23 +200,23 @@ async.waterfall([
     async.eachLimit(repos, JOBS, cloneOrUpdate, function() {
       // report a nice error log
       if (failed.length) {
-        console.log('FAILED REPOS'.bold.red);
+        console.log(chalk.bold.red('FAILED REPOS'));
         failed.forEach(function(fail) {
-          console.log('Repo: '.bold, fail.repo.from);
-          console.log('Folder: '.bold, fail.repo.to);
-          console.log('Operation: '.bold, fail.operation);
-          console.log('Reason: '.bold, fail.reason);
+          console.log(chalk.bold('Repo: '), fail.repo.from);
+          console.log(chalk.bold('Folder: '), fail.repo.to);
+          console.log(chalk.bold('Operation: '), fail.operation);
+          console.log(chalk.bold('Reason: '), fail.reason);
         });
         callback('FAILED SYNC');
       } else {
-        console.log('OK'.bold.green);
+        console.log(chalk.bold.green('OK'));
         callback();
       }
     });
   }
 ], function(err) {
   if (err) {
-    console.log(String(err).bold.red);
+    console.log(chalk.bold.red(String(err)));
     process.exit(1);
   }
 });
