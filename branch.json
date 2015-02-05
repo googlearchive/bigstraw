@@ -1,0 +1,10 @@
+[
+  {
+    "dir": "test",
+    "org": "PolymerLabs",
+    "branch": "for-testing",
+    "repos": [
+      "bigstraw"
+    ]
+  }
+]
