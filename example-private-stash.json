@@ -1,0 +1,10 @@
+[
+  {
+    "dir": "test",
+    "org": "",
+    "url": "privatestashdomain.com/stash/scm/project",
+    "repos": [
+      "repo-name.git"
+    ]
+  }
+]
