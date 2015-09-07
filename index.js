@@ -83,6 +83,9 @@ function githubToCheckout(repo) {
   if (parts.length === 1) {
     parts[1] = parts[0];
   }
+  if (parts[1].substring(parts[1].length - 4, parts[1].length) === '.git') {
+    parts[1] = parts[1].substring(0, parts[1].length - 4);
+  }
   // [githubName, checkoutName]
   return parts;
 }
@@ -152,7 +155,7 @@ function clone(repo, callback) {
     '-c',
     'core.askpass=true',
     '--recurse',
-    ACCESS + 'github.com/' + repo.from,
+    ACCESS + repo.from,
     path.basename(repo.to)
   ];
   var branch = repo.branch || options.branch;
@@ -184,11 +187,20 @@ async.waterfall([
       return a.concat(b);
     });
     configs.forEach(function(conf) {
+      var access = '';
+      if (conf.url === undefined || conf.url === '') {
+        access += 'github.com/';
+      } else {
+        access += conf.url + '/';
+      }
+      if (conf.org !== '') {
+        access += conf.org + '/';
+      }
       conf.repos.forEach(function(r) {
         folders[conf.dir] = 1;
         var repoNames = githubToCheckout(r);
         repos.push({
-          from: conf.org + '/' + repoNames[0] + '.git',
+          from: access + repoNames[0],
           to: path.join(conf.dir, repoNames[1]),
           branch: conf.branch
         });
